@@ -31,5 +31,11 @@ experimental versions.
 > ⚠️ Models, checkpoints, and LoRAs are **not included** in this repository.
 
 ---
+### Ace Step 1.5 – Cover (Early Release)
+
+- Music to Music using *Ace Step 1.5*
+- No custom nodes required, only beta nodes
+
+This workflow works as intended. Though there appears to be issues with comfy and ace and I am forced into lowvram for this. I had built this 2 days ago, but figured it was some issue with floating that duration, but it in fact is a problem with my machine/comfyui or something when it comes to Ace Step and memory.
 
 ## Folder Structure
