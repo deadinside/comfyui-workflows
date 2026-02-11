@@ -34,8 +34,15 @@ experimental versions.
 ### Ace Step 1.5 – Cover (Early Release)
 
 - Music to Music using *Ace Step 1.5*
-- Does require Video Helper Suite and Beta Nodes from ComfyUI
+- Does require Beta Nodes from ComfyUI
+- Due to bug in the way Empty Ace Step 1.5 Laten Audio handles Seconds. Removed Video Helper Suite from this workflow
 
-This workflow works as intended. Though there appears to be issues with comfy and ace and I am forced into lowvram for this. I had built this 2 days ago, but figured it was some issue with floating that duration, but it in fact is a problem with my machine/comfyui or something when it comes to Ace Step and memory.
+This workflow works as intended. Though there are issues with the way Ace Step handles duration, which is handled by the latent. Hopefully this will be addressed in an update.
+
+### Custom Nodes
+
+# comfyui-latent-weighted-blend
+
+- This is a custom latent blender that allows you to better understand the weighting when mixing latents. This also features a Z Image Turbo safe resize allowing you to set the final output size.
 
 ## Folder Structure
