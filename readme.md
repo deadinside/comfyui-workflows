@@ -45,4 +45,8 @@ This workflow works as intended. Though there are issues with the way Ace Step h
 
 - This is a custom latent blender that allows you to better understand the weighting when mixing latents. This also features a Z Image Turbo safe resize allowing you to set the final output size.
 
+
+### Qwen LLM ComfyUI Web
+
+- Experimental Web UI to interact with the Qwen 3 workflow from ComfyUI. Comfy v14 is required.
 ## Folder Structure
