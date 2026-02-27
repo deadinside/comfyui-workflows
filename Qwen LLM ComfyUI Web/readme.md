@@ -1,8 +1,3 @@
-Perfect. Below is a **clean, professional, open-source release README** suitable for GitHub.
-It’s structured, clear, contributor-friendly, and written like a proper public repo release.
-
----
-
 # ComfyUI Qwen LLM Web Interface
 
 A lightweight local web application that connects to **ComfyUI’s Qwen workflows** via API and provides a simple browser-based interface for interacting with Vision-Language Models (VLM).
