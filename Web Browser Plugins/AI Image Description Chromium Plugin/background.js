@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.contextMenus.create({
     id: "preset4",
-    title: "AI Imgage Error Detection",
+    title: "AI Image Error Detection",
     contexts: ["action"]
   });
 
