@@ -28,7 +28,6 @@ Designed for creative workflows, prompt-building, dataset generation, and image-
 
 Start ComfyUI with:
 
-```bash
 python main.py --listen --port 8188 --enable-cors-header
 
 The extension communicates with:
@@ -37,11 +36,13 @@ POST /prompt
 GET /history/<prompt_id>
 
 🧠 Supported Models (6 Total)
+Can use any model as needed or preferred. 
+You do not need to download all the models.
 
 All models include their own vision tower + projector
 ➡️ No CLIP / SigLIP nodes required
 
-Qwen 3.5 Vision Models
+### 2. Qwen 3.5 Vision Models (Supported Models)
 
 Source:
 https://huggingface.co/Comfy-Org/Qwen3.5/tree/main/text_encoders
@@ -50,10 +51,12 @@ qwen3.5_4b_bf16.safetensors
 Fastest Qwen model
 Good detail
 Low VRAM usage
+
 qwen3.5_9b_bf16.safetensors
 Higher detail
 Higher VRAM requirement
-Gemma 3 Vision Models
+
+### 2. Gemma 3 Vision Models (Supported Models)
 
 Source:
 https://huggingface.co/Comfy-Org/ltx-2/tree/main/split_files/text_encoders
@@ -64,22 +67,27 @@ gemma_3_12B_it.safetensors
 Full precision
 Highest quality
 Heaviest model
+
 gemma_3_12B_it_fp4_mixed.safetensors
 Best balance (recommended)
+
 gemma_3_12B_it_fp8_scaled.safetensors
 Faster than FP4
 Slightly lower precision
+
 gemma_3_12B_it_fpmixed.safetensors
 Between FP4 and FP8
 
 📊 Model Comparison
-Model	VRAM	Speed	Quality	Notes
-Qwen 3.5 4B BF16	6–8GB	Fast	Good	Best Qwen default
-Qwen 3.5 9B BF16	12–14GB	Medium	Very High	High-end GPUs
-Gemma 3 12B IT FP4	8–10GB	Medium	Very High	Best balance
-Gemma 3 12B IT FP8	10–12GB	Medium	High	Faster than FP4
-Gemma 3 12B IT FPMixed	10–12GB	Medium	High	Between FP4 & FP8
-Gemma 3 12B IT Full	16GB+	Slow	Ultra High	Max quality
+
+| Model | VRAM | Speed | Quality | Notes |
+| --- | --- | --- | --- | --- |
+| Qwen 3.5 4B BF16 | ~6–8GB | Fast | Good | Best Qwen default |
+| Qwen 3.5 9B BF16 | ~12–14GB | Medium | Very High | High‑end GPUs |
+| Gemma 3 12B IT FP4 | ~8–10GB | Medium | Very High | Best balance |
+| Gemma 3 12B IT FP8 | ~10–12GB | Medium | High | Faster than FP4 |
+| Gemma 3 12B IT FPMixed | ~10–12GB | Medium | High | Between FP4 & FP8 |
+| Gemma 3 12B IT Full | ~16GB+ | Slow | Ultra High | Max quality |
 
 ⭐ Recommended Defaults
 Best overall: gemma_3_12B_it_fp4_mixed.safetensors
