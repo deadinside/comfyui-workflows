@@ -1,0 +1,62 @@
+{
+  "5": {
+    "inputs": {
+      "preview_markdown": "Okay, here's a description of the image, breaking it down into people, background, and lighting:\n\n**People:**\n\n*   The primary person in the image is a woman. She appears to be fair-skinned with glasses. She is wearing a black t-shirt that says \"My Spanish Teacher is Muy Caliente!\" in white lettering. She is also wearing light blue shorts. She is leaning against what looks like a suitcase or bag.\n*   There is also a cat visible in the lower left corner of the frame. It is fluffy and white.\n\n**Background:**\n\n*   The setting seems to be inside a home, possibly a bedroom or living area. There are various items visible in the background including a large furry bag, suitcases, a shelf with items on it, and a dark piece of furniture (possibly a cabinet or entertainment center).\n*   The overall impression is a somewhat cluttered but lived-in space.\n\n**Lighting:**\n\n*   The lighting in the image appears to be a mix of natural and artificial light. The room isn't brightly lit, suggesting it may be evening or a less sunny time of day.\n*   There is a warm tone to the lighting, which gives the image a slightly cozy feel.\n\n\n\n**Please note:** I am programmed to be a helpful and harmless AI assistant. My descriptions are purely observational and objective. I do not offer opinions or judgments about the content of images.",
+      "preview_text": "Okay, here's a description of the image, breaking it down into people, background, and lighting:\n\n**People:**\n\n*   The primary person in the image is a woman. She appears to be fair-skinned with glasses. She is wearing a black t-shirt that says \"My Spanish Teacher is Muy Caliente!\" in white lettering. She is also wearing light blue shorts. She is leaning against what looks like a suitcase or bag.\n*   There is also a cat visible in the lower left corner of the frame. It is fluffy and white.\n\n**Background:**\n\n*   The setting seems to be inside a home, possibly a bedroom or living area. There are various items visible in the background including a large furry bag, suitcases, a shelf with items on it, and a dark piece of furniture (possibly a cabinet or entertainment center).\n*   The overall impression is a somewhat cluttered but lived-in space.\n\n**Lighting:**\n\n*   The lighting in the image appears to be a mix of natural and artificial light. The room isn't brightly lit, suggesting it may be evening or a less sunny time of day.\n*   There is a warm tone to the lighting, which gives the image a slightly cozy feel.\n\n\n\n**Please note:** I am programmed to be a helpful and harmless AI assistant. My descriptions are purely observational and objective. I do not offer opinions or judgments about the content of images.",
+      "previewMode": null,
+      "source": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "PreviewAny",
+    "_meta": {
+      "title": "Preview as Text"
+    }
+  },
+  "7": {
+    "inputs": {
+      "prompt": "Describe this image. Describe the people pictured in this image if multiple. Describe the person, the background, the lighting.",
+      "max_length": 2048,
+      "sampling_mode": "on",
+      "sampling_mode.temperature": 0.7,
+      "sampling_mode.top_k": 64,
+      "sampling_mode.top_p": 0.95,
+      "sampling_mode.min_p": 0.05,
+      "sampling_mode.repetition_penalty": 1.05,
+      "sampling_mode.seed": 0,
+      "clip": [
+        "8",
+        0
+      ],
+      "image": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "TextGenerate",
+    "_meta": {
+      "title": "TextGenerate"
+    }
+  },
+  "8": {
+    "inputs": {
+      "clip_name": "gemma_3_12B_it_fp4_mixed.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "12": {
+    "inputs": {
+      "image": "1127619354A2_OM_F.webp"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  }
+}

@@ -1,9 +1,7 @@
-Perfect. Below is a **clean, professional, open-source release README** suitable for GitHub.
-It’s structured, clear, contributor-friendly, and written like a proper public repo release.
 
----
+<img width="1024" height="624" alt="Screenshot 2026-02-26 195647" src="https://github.com/user-attachments/assets/320968c2-3d2c-453a-9172-79b42d790fff" />
 
-# ComfyUI Qwen VLM Web Interface
+# ComfyUI Qwen LLM Web Interface
 
 A lightweight local web application that connects to **ComfyUI’s Qwen workflows** via API and provides a simple browser-based interface for interacting with Vision-Language Models (VLM).
 
@@ -325,7 +323,7 @@ If submitting pull requests:
 
 ## 📄 License
 
-Add your preferred license here (MIT recommended for maximum flexibility).
+This project is licensed under the MIT License — see the License file for details.
 
 ---
 

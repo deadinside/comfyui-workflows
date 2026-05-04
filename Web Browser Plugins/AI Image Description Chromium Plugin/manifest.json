@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "AI Image Description",
+  "version": "1.0",
+  "description": "Right-click an image and get a AI image description.",
+  "permissions": ["contextMenus", "activeTab", "scripting", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "AI Image Description"
+  },
+  "options_page": "options/options.html"
+}
