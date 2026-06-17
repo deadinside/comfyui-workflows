@@ -6,10 +6,10 @@ Designed for creative workflows, prompt-building, dataset generation, and image-
 
 ---
 
-![MMain UI](ScreenShots\main.png)
-![alt text](ScreenShots\Result.png) 
-![alt text](ScreenShots\history.png)
-![Settings Panel](ScreenShots\Settings.png)
+![MMain UI](https://github.com/deadinside/comfyui-workflows/blob/main/Web%20Browser%20Plugins/AI%20Image%20Description%20Chromium%20Plugin/ScreenShots/main.png?raw=true)
+![alt text](https://github.com/deadinside/comfyui-workflows/blob/main/Web%20Browser%20Plugins/AI%20Image%20Description%20Chromium%20Plugin/ScreenShots/Result.png?raw=true) 
+![alt text](https://github.com/deadinside/comfyui-workflows/blob/main/Web%20Browser%20Plugins/AI%20Image%20Description%20Chromium%20Plugin/ScreenShots/history.png?raw=true)
+![Settings Panel](https://github.com/deadinside/comfyui-workflows/blob/main/Web%20Browser%20Plugins/AI%20Image%20Description%20Chromium%20Plugin/ScreenShots/Settings.png?raw=true)
 
 ## ✨ Features
 
