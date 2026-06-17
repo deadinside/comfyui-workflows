@@ -1,71 +1,202 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <style>
-    body {
-      width: 320px;
-      margin: 0;
-      padding: 16px;
-      font-family: system-ui, sans-serif;
-      background: #fafafa;
-      color: #222;
-    }
-
-    #status {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #444;
-    }
-
-    #output {
-      margin-top: 12px;
-      padding: 12px;
-      background: #fff;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      font-size: 13px;
-      line-height: 1.4;
-      white-space: pre-wrap;
-      max-height: 260px;
-      overflow-y: auto;
-    }
-
-    #copyBtn {
-      margin-top: 12px;
-      padding: 8px 12px;
-      width: 100%;
-      border: none;
-      border-radius: 6px;
-      background: #4a6df0;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    #copyBtn:hover {
-      background: #3a59d8;
-    }
-    body {
-  --bg: #ffffff;
-  --fg: #000000;
+    :root {
+      --bg: #fafafa;
+      --fg: #222;
+      --card: #fff;
+      --border: #ddd;
+      --muted: #666;
+      --accent: #4a6df0;
+      --accent-hover: #3a59d8;
     }
 
     body.dark {
       --bg: #111;
       --fg: #e5e5e5;
+      --card: #1c1c1c;
+      --border: #333;
+      --muted: #999;
+      --accent: #4a6df0;
+      --accent-hover: #5a7bff;
     }
 
-    body, #output, #status {
+    body {
+      width: 340px;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--fg);
     }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .panel { padding: 16px; }
+    .hidden { display: none; }
+
+    #status {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--fg);
+    }
+
+    /* Progress bar */
+    #progressWrap {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+      display: none;
+    }
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.2s ease;
+    }
+    /* Indeterminate animation when we have no value/max */
+    #progressBar.indeterminate {
+      width: 40% !important;
+      animation: slide 1.1s infinite ease-in-out;
+    }
+    @keyframes slide {
+      0%   { margin-left: -40%; }
+      100% { margin-left: 100%; }
+    }
+
+    .thumb {
+      max-width: 100%;
+      max-height: 120px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      margin: 0 auto 10px;
+      display: none;
+    }
+
+    #output, .hist-result {
+      margin-top: 4px;
+      padding: 12px;
+      background: var(--card);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .error { color: #d33; }
+
+    button.action {
+      margin-top: 12px;
+      padding: 8px 12px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.action:hover { background: var(--accent-hover); }
+
+    /* History */
+    .hist-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 20px 0; }
+    .hist-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: var(--card);
+    }
+    .hist-head { display: flex; gap: 10px; }
+    .hist-thumb {
+      width: 56px; height: 56px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--border);
+    }
+    .hist-meta { font-size: 11px; color: var(--muted); line-height: 1.4; overflow: hidden; }
+    .hist-meta .model { font-weight: 600; color: var(--fg); }
+    .hist-snippet {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+      max-height: 60px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+    .hist-snippet.expanded { max-height: none; }
+    .hist-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .hist-actions button {
+      flex: 1;
+      padding: 5px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: none;
+      color: var(--fg);
+      cursor: pointer;
+    }
+    .hist-actions button:hover { border-color: var(--accent); color: var(--accent); }
+    #clearBtn {
+      width: 100%; margin-bottom: 12px; padding: 6px;
+      font-size: 12px; border: 1px solid var(--border);
+      border-radius: 6px; background: none; color: var(--muted); cursor: pointer;
+    }
+    #clearBtn:hover { color: #d33; border-color: #d33; }
   </style>
 </head>
 <body>
-  <div id="status">Waiting for description...</div>
-  <div id="output"></div>
-  <button id="copyBtn" style="display:none;">Copy</button>
+  <div class="tabs">
+    <button class="tab active" data-tab="current">Current</button>
+    <button class="tab" data-tab="history">History</button>
+  </div>
+
+  <!-- CURRENT -->
+  <div id="panel-current" class="panel">
+    <div id="status">Waiting for description…</div>
+    <div id="progressWrap"><div id="progressBar"></div></div>
+    <img id="thumb" class="thumb" alt="">
+    <div id="output"></div>
+    <button id="copyBtn" class="action" style="display:none;">Copy</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="panel-history" class="panel hidden">
+    <button id="clearBtn">Clear all history</button>
+    <div id="historyList"></div>
+  </div>
 
   <script src="popup.js"></script>
 </body>

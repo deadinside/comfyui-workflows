@@ -1,10 +1,15 @@
-# AI Image Description Plugin (Gemma 3 / Qwen 3.5 Vision)
+# AI Image Description Plugin (Gemma 3 / Qwen Vision)
 
-A lightweight browser extension that sends any image to ComfyUI and returns a high-quality natural-language description using **Gemma 3 Vision** or **Qwen 3.5 Vision** models.
+A lightweight browser extension that sends any image to ComfyUI and returns a high-quality natural-language description using **Gemma 3 Vision** or **Qwen 3 Vision** models.
 
 Designed for creative workflows, prompt-building, dataset generation, and image-to-image/video pipelines.
 
 ---
+
+![MMain UI](ScreenShots\main.png)
+![alt text](ScreenShots\Result.png) 
+![alt text](ScreenShots\history.png)
+![Settings Panel](ScreenShots\Settings.png)
 
 ## ✨ Features
 
@@ -97,14 +102,16 @@ Highest detail: gemma_3_12B_it.safetensors
 
 🧩 How It Works
 User right-clicks an image → AI Image Description
-Extension fetches the image (URL or blob)
-Sends request to ComfyUI using workflow JSON
-ComfyUI Pipeline
-Loads image
-Encodes using selected Vision model
-Generates description
-Extension polls /history/<id>
-Displays result in popup with Copy button
+The background service worker (not the popup) owns the request, so closing or
+reopening the popup never loses an in-progress result.
+- Fetches the image (URL or blob) and uploads it to ComfyUI
+- Sends the request to ComfyUI using workflow JSON
+- ComfyUI loads the image, encodes it with the selected vision model, and
+  generates a description
+- Live progress is read from ComfyUI's WebSocket (/ws), with /history polling
+  as a fallback
+- The result streams into the popup with a Copy button, and is saved to the
+  request History tab
 
 ⚙️ Extension Settings
 ComfyUI URL
@@ -186,10 +193,11 @@ Large models require more VRAM
 Try a smaller model
 
 🗺️ Roadmap
-Auto-detect installed models
+✅ Auto-detect installed models (live from /object_info/CLIPLoader)
+✅ Inline image preview (thumbnail in popup + history)
+✅ Request history
 Model-specific prompt presets
 Multi-model fallback
-Inline image preview
 Short / medium / long modes
 
 📜 License

@@ -132,15 +132,12 @@
     The extension will automatically add <code>/prompt</code>.
   </div>
 
-  <label for="modelSelect">Model (Gemma Or Qwen):</label>
+  <label for="modelSelect">Model (text encoder):</label>
   <select id="modelSelect">
-<option value="qwen3.5_4b_bf16.safetensors">qwen3.5_4b_bf16</option>
-    <option value="qwen3.5_9b_bf16.safetensors">qwen3.5_9b_bf16</option>
-    <option value="gemma_3_12B_it_fp4_mixed.safetensors">Gemma 3 12B IT FP4 Mixed</option>
-    <option value="gemma_3_12B_it_fp8_scaled.safetensors">Gemma 3 12B IT FP8 Scaled</option>
-    <option value="gemma_3_12B_it_fpmixed.safetensors">Gemma 3 12B IT FP Mixed</option>
-    <option value="gemma_3_12B_it.safetensors">Gemma 3 12B IT</option>
+    <option value="">Loading models…</option>
   </select>
+  <button id="refreshModelsBtn" type="button" style="margin-top:8px;">Refresh model list</button>
+  <div id="modelStatus" class="note"></div>
 
   <label>
     Custom prompt:<br>

@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "AI Image Description",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Right-click an image and get a AI image description.",
-  "permissions": ["contextMenus", "activeTab", "scripting", "storage"],
+  "permissions": ["contextMenus", "activeTab", "scripting", "storage", "unlimitedStorage"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js",

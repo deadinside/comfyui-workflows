@@ -1,219 +1,217 @@
+// ===========================================================================
+// Popup — a VIEW only. All work happens in background.js; the popup reads
+// `activeRequest` from storage and live-updates via storage.onChanged, so it
+// can be closed and reopened mid-request without losing anything.
+// ===========================================================================
+
+const els = {};
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const status = document.getElementById("status");
-  const output = document.getElementById("output");
-  const copyBtn = document.getElementById("copyBtn");
+  els.status = document.getElementById("status");
+  els.output = document.getElementById("output");
+  els.copyBtn = document.getElementById("copyBtn");
+  els.thumb = document.getElementById("thumb");
+  els.progressWrap = document.getElementById("progressWrap");
+  els.progressBar = document.getElementById("progressBar");
+  els.historyList = document.getElementById("historyList");
 
   // Dark mode
   const { darkMode } = await chrome.storage.sync.get("darkMode");
-  if (darkMode) {
-    document.body.classList.add("dark");
-  }
+  if (darkMode) document.body.classList.add("dark");
 
-  // Pending request
-  const { pendingRequest } = await chrome.storage.local.get("pendingRequest");
-  if (!pendingRequest) {
-    status.textContent = "No request found.";
-    return;
-  }
+  // Tabs
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => switchTab(tab.dataset.tab));
+  });
 
-  const { imageUrl, presetId } = pendingRequest;
-  chrome.storage.local.remove("pendingRequest");
+  // Initial render
+  const { activeRequest } = await chrome.storage.local.get("activeRequest");
+  renderCurrent(activeRequest);
+  renderHistory();
 
-  // Load settings
-  const { comfyUrl, gemmaModel, customPrompt } = await chrome.storage.sync.get([
-    "comfyUrl",
-    "gemmaModel",
-    "customPrompt"
-  ]);
-
-  const llmUrl = comfyUrl;
-
-  // Final prompt text (custom or fallback)
-  const promptText =
-    customPrompt && customPrompt.trim().length > 0
-      ? customPrompt.trim()
-      : "Describe this image. Describe the people pictured in this image if multiple. In detail, describe the person, the background, the lighting. Stick to only the information asked and do not add extra dialogue. Provide the information back in the form of a detailed image prompt.";
-
-  status.textContent = "Uploading image...";
-
-  //
-  // STEP 1 — Fetch the image blob
-  //
-  let imgBlob;
-  try {
-    imgBlob = await fetch(imageUrl).then(r => r.blob());
-  } catch (err) {
-    status.textContent = "Failed to fetch image.";
-    output.textContent = err.toString();
-    return;
-  }
-
-  //
-  // STEP 2 — Upload the image to ComfyUI
-  //
-  let uploadedName;
-  try {
-    const form = new FormData();
-    form.append("image", imgBlob, "upload.png");
-
-    const uploadUrl = llmUrl.replace("/prompt", "/upload/image");
-    console.log("UPLOAD URL:", uploadUrl);
-
-    const uploadRes = await fetch(uploadUrl, {
-      method: "POST",
-      body: form
-    });
-
-    const raw = await uploadRes.text();
-    console.log("UPLOAD RAW:", raw);
-
-    const uploadJson = JSON.parse(raw);
-    uploadedName = uploadJson.name;
-
-    if (!uploadedName) {
-      throw new Error("Upload returned no filename.");
+  // Live updates while the popup is open
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.activeRequest) {
+      renderCurrent(changes.activeRequest.newValue);
     }
-  } catch (err) {
-    status.textContent = "Image upload failed.";
-    output.textContent = err.toString();
-    return;
-  }
-
-  status.textContent = "Generating description, please wait...";
-
-  //
-  // STEP 3 — Build workflow payload
-  //
-  const payload = {
-    "5": {
-      "inputs": {
-        "preview": "",
-        "previewMode": null,
-        "source": ["7", 0]
-      },
-      "class_type": "PreviewAny"
-    },
-    "7": {
-      "inputs": {
-        "prompt": promptText,
-        "max_length": 2048,
-        "sampling_mode": "on",
-        "sampling_mode.temperature": 0.7,
-        "sampling_mode.top_k": 64,
-        "sampling_mode.top_p": 0.95,
-        "sampling_mode.min_p": 0.05,
-        "sampling_mode.repetition_penalty": 1.05,
-        "sampling_mode.seed": 0,
-        "clip": ["8", 0],
-        "image": ["12", 0],
-        "image_type": "rgb"
-      },
-      "class_type": "TextGenerate"
-    },
-    "8": {
-      "inputs": {
-        "clip_name": gemmaModel,
-        "type": "ltxv",
-        "device": "default"
-      },
-      "class_type": "CLIPLoader"
-    },
-    "12": {
-      "inputs": {
-        "image": uploadedName
-      },
-      "class_type": "LoadImage"
+    if (area === "local" && changes.history) {
+      renderHistory();
     }
-  };
-
-  // Randomize seed if it's 0 (ComfyUI treats 0 as deterministic/cached)
-  if (payload["7"].inputs["sampling_mode.seed"] === 0) {
-    payload["7"].inputs["sampling_mode.seed"] =
-      Math.floor(Math.random() * 9999) + 1;
-  }
-
-  //
-  // STEP 4 — Send workflow to /prompt
-  //
-  let promptId;
-  try {
-    const response = await fetch(llmUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: payload })
-    });
-
-    const json = await response.json();
-    promptId = json.prompt_id;
-
-    if (!promptId) {
-      throw new Error("No prompt_id returned from ComfyUI.");
-    }
-  } catch (err) {
-    status.textContent = "Error sending workflow.";
-    output.textContent = err.toString();
-    return;
-  }
-
-  //
-  // STEP 5 — Poll /history/<prompt_id>
-  //
-  status.textContent = "Processing...";
-
-  async function pollForResult() {
-    const historyUrl = llmUrl.replace("/prompt", `/history/${promptId}`);
-    console.log("HISTORY URL:", historyUrl);
-
-    try {
-      const res = await fetch(historyUrl);
-      const histText = await res.text();
-      console.log("HISTORY RAW:", histText);
-
-      let hist;
-      try {
-        hist = JSON.parse(histText);
-      } catch (err) {
-        console.log("History JSON parse error:", err);
-        return null;
-      }
-
-      const entry = hist[promptId];
-      if (!entry) {
-        await new Promise(r => setTimeout(r, 1000));
-        return pollForResult();
-      }
-
-      const node5 = entry.outputs?.["5"];
-      if (!node5) {
-        await new Promise(r => setTimeout(r, 1000));
-        return pollForResult();
-      }
-
-      const textArray = node5.text;
-      const text = Array.isArray(textArray) ? textArray.join("\n") : textArray;
-
-      if (text) {
-        return { text };
-      }
-
-    } catch (err) {
-      console.log("Polling error:", err);
-    }
-
-    await new Promise(r => setTimeout(r, 1000));
-    return pollForResult();
-  }
-
-  const result = await pollForResult();
-
-  //
-  // STEP 6 — Extract text
-  //
-  const text = result?.text || "No description returned.";
-
-  status.textContent = "Done!";
-  output.textContent = text;
-  copyBtn.style.display = "block";
-
-  copyBtn.onclick = () => navigator.clipboard.writeText(text);
+  });
 });
+
+function switchTab(name) {
+  document.querySelectorAll(".tab").forEach(t =>
+    t.classList.toggle("active", t.dataset.tab === name)
+  );
+  document.getElementById("panel-current").classList.toggle("hidden", name !== "current");
+  document.getElementById("panel-history").classList.toggle("hidden", name !== "history");
+}
+
+// ---------------------------------------------------------------------------
+// Current request
+// ---------------------------------------------------------------------------
+
+function renderCurrent(req) {
+  if (!req) {
+    els.status.textContent = "No request yet. Right-click an image → AI Image Description.";
+    els.output.textContent = "";
+    els.output.style.display = "none";
+    els.thumb.style.display = "none";
+    els.progressWrap.style.display = "none";
+    els.copyBtn.style.display = "none";
+    return;
+  }
+
+  // Thumbnail
+  if (req.thumbnail) {
+    els.thumb.src = req.thumbnail;
+    els.thumb.style.display = "block";
+  } else {
+    els.thumb.style.display = "none";
+  }
+
+  els.status.textContent = req.statusText || req.status;
+  els.status.classList.toggle("error", req.status === "error");
+
+  // Progress bar
+  const inFlight = req.status === "uploading" || req.status === "queued" || req.status === "running";
+  els.progressWrap.style.display = inFlight ? "block" : "none";
+  if (inFlight) {
+    if (req.progress && req.progress.max) {
+      const pct = Math.round((req.progress.value / req.progress.max) * 100);
+      els.progressBar.classList.remove("indeterminate");
+      els.progressBar.style.width = pct + "%";
+    } else {
+      els.progressBar.classList.add("indeterminate");
+    }
+  }
+
+  // Output — only shown once there's a result or an error to display.
+  if (req.status === "error") {
+    els.output.textContent = req.error || "Something went wrong.";
+    els.output.classList.add("error");
+    els.output.style.display = "block";
+    els.copyBtn.style.display = "none";
+  } else if (req.status === "done") {
+    els.output.textContent = req.result || "No description returned.";
+    els.output.classList.remove("error");
+    els.output.style.display = "block";
+    els.copyBtn.style.display = "block";
+    els.copyBtn.onclick = () => copyText(els.copyBtn, req.result || "");
+  } else {
+    els.output.textContent = "";
+    els.output.classList.remove("error");
+    els.output.style.display = "none";
+    els.copyBtn.style.display = "none";
+  }
+}
+
+// ---------------------------------------------------------------------------
+// History
+// ---------------------------------------------------------------------------
+
+async function renderHistory() {
+  const { history = [] } = await chrome.storage.local.get("history");
+  els.historyList.innerHTML = "";
+
+  if (history.length === 0) {
+    els.historyList.innerHTML = '<div class="hist-empty">No history yet.</div>';
+    return;
+  }
+
+  for (const item of history) {
+    els.historyList.appendChild(buildHistoryItem(item));
+  }
+}
+
+function buildHistoryItem(item) {
+  const wrap = document.createElement("div");
+  wrap.className = "hist-item";
+
+  const head = document.createElement("div");
+  head.className = "hist-head";
+
+  const img = document.createElement("img");
+  img.className = "hist-thumb";
+  if (item.thumbnail) img.src = item.thumbnail;
+  head.appendChild(img);
+
+  const meta = document.createElement("div");
+  meta.className = "hist-meta";
+  meta.innerHTML =
+    `<div class="model">${escapeHtml(prettyModel(item.model))}</div>` +
+    `<div>${formatDate(item.finishedAt || item.startedAt)}</div>` +
+    `<div>${escapeHtml(truncate(item.prompt, 70))}</div>`;
+  head.appendChild(meta);
+  wrap.appendChild(head);
+
+  const snippet = document.createElement("div");
+  snippet.className = "hist-snippet hist-result";
+  snippet.textContent = item.result || "(no result)";
+  snippet.title = "Click to expand / collapse";
+  snippet.addEventListener("click", () => snippet.classList.toggle("expanded"));
+  wrap.appendChild(snippet);
+
+  const actions = document.createElement("div");
+  actions.className = "hist-actions";
+
+  const copyBtn = document.createElement("button");
+  copyBtn.textContent = "Copy";
+  copyBtn.addEventListener("click", () => copyText(copyBtn, item.result || ""));
+
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "Delete";
+  delBtn.addEventListener("click", () => deleteHistory(item.id));
+
+  actions.appendChild(copyBtn);
+  actions.appendChild(delBtn);
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
+async function deleteHistory(id) {
+  const { history = [] } = await chrome.storage.local.get("history");
+  await chrome.storage.local.set({ history: history.filter(h => h.id !== id) });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("clearBtn").addEventListener("click", async () => {
+    await chrome.storage.local.set({ history: [] });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Utilities
+// ---------------------------------------------------------------------------
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => (btn.textContent = original), 1200);
+  });
+}
+
+function prettyModel(model) {
+  if (!model) return "Unknown model";
+  return model.replace(/\.safetensors$/, "");
+}
+
+function truncate(s, n) {
+  if (!s) return "";
+  return s.length > n ? s.slice(0, n) + "…" : s;
+}
+
+function formatDate(ts) {
+  if (!ts) return "";
+  return new Date(ts).toLocaleString();
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
