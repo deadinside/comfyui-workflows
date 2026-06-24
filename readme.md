@@ -39,10 +39,5 @@ experimental versions.
 
 This workflow works as intended. Though there are issues with the way Ace Step handles duration, which is handled by the latent. Hopefully this will be addressed in an update.
 
-### Custom Nodes
-
-# comfyui-latent-weighted-blend
-
-- This is a custom latent blender that allows you to better understand the weighting when mixing latents. This also features a Z Image Turbo safe resize allowing you to set the final output size.
 
 ## Folder Structure
