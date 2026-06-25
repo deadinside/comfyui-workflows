@@ -30,6 +30,26 @@ experimental versions.
 
 > ⚠️ Models, checkpoints, and LoRAs are **not included** in this repository.
 
+### Z Image Turbo – Image Blend Weighted Blend Node Version
+
+- Image-to-image blending workflow using **Z Image Turbo**
+- No ControlNet
+- Uses a custom node (latent-weighted-blend) here: https://github.com/deadinside/comfyui-custom-nodes/tree/main/comfyui-latent-weighted-blend
+- Designed as a clean, stable baseline
+
+This workflow is intended as an **early release / foundation version**.
+It does **not** include the custom latent blending node used in later
+experimental versions.
+
+---
+
+## Requirements
+
+- ComfyUI
+- Z Image Turbo model properly installed
+
+> ⚠️ Models, checkpoints, and LoRAs are **not included** in this repository.
+
 ---
 ### Ace Step 1.5 – Cover (Early Release)
 
