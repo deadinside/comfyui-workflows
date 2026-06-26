@@ -59,5 +59,12 @@ experimental versions.
 
 This workflow works as intended. Though there are issues with the way Ace Step handles duration, which is handled by the latent. Hopefully this will be addressed in an update.
 
+### Commercial-AI-MusicApp-Like-Caption
+
+- Designed for Ace Step 1.5 Gradio UI LRC Files
+- Made to simulate lyric videos like popular AI music apps
+- Can be used with loaded image or connected to your favorite image generator directly. Decode VAE>Background_Image
+
+This workflow works as intended. Though there are issues with the way Ace Step handles duration, which is handled by the latent. Hopefully this will be addressed in an update.
 
 ## Folder Structure
