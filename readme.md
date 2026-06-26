@@ -62,6 +62,7 @@ This workflow works as intended. Though there are issues with the way Ace Step h
 ### Commercial-AI-MusicApp-Like-Caption
 
 - Designed for Ace Step 1.5 Gradio UI LRC Files
+- Uses custom node designed by me: https://github.com/deadinside/comfyui-custom-nodes/tree/main/comfyui-ffmpeg-vtt-video-builder
 - Made to simulate lyric videos like popular AI music apps
 - Can be used with loaded image or connected to your favorite image generator directly. Decode VAE>Background_Image
 
